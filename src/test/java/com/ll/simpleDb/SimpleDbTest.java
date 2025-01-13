@@ -19,6 +19,11 @@ public class SimpleDbTest {
 //        makeArticleTestData();
     }
 
+    @Test
+    void t00(){
+
+    }
+
     private static void createArticleTable() {
         simpleDb.run("DROP TABLE IF EXISTS article");
 
@@ -34,6 +39,7 @@ public class SimpleDbTest {
                 )
                 """);
     }
+
 
 //    private void makeArticleTestData() {
 //        IntStream.rangeClosed(1, 6).forEach(no -> {
