@@ -1,5 +1,11 @@
 package com.ll.simpleDb;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class Sql {
 
     private StringBuilder sqlBuilder;
@@ -20,13 +26,5 @@ public class Sql {
 
     public long insert() {
         return 1;
-    }
-
-    public int update() {
-        return 3;
-    }
-
-    public int delete() {
-        return 2;
     }
 }
