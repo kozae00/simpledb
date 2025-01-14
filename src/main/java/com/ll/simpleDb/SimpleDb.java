@@ -51,10 +51,10 @@ public class SimpleDb {
         return _run(sql, List.class, params);
     }
 
-    public List<Article> selectRows(String sql, List<Object> params, Class<?> cls) {
-        return selectRows(sql, params)
-                .stream()
-                .map(Article::fromMap)
+    public <T> List<T> selectRows(String sql, List<Object> params, Class<T> cls) {
+
+        return selectRows(sql, params).stream()
+                .map(map -> Util.mapToObj(map, cls))
                 .toList();
     }
 
@@ -92,8 +92,8 @@ public class SimpleDb {
                 return parseResultSet(rs, cls);
             }
 
-            if(sql.startsWith("INSERT")) {
-                if(cls == Long.class) {
+            if (sql.startsWith("INSERT")) {
+                if (cls == Long.class) {
 
                     stmt.executeUpdate();
                     ResultSet rs = stmt.getGeneratedKeys();
@@ -165,7 +165,7 @@ public class SimpleDb {
         List<Map<String, Object>> maps = selectRows(sql, params);
 
         return maps.stream()
-                .map(map -> (Long)map.values().iterator().next())
+                .map(map -> (Long) map.values().iterator().next())
                 .toList();
     }
 }
