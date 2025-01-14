@@ -28,25 +28,25 @@ public class SimpleDb {
 
     public boolean selectBoolean(String sql) {
         System.out.println("sql : " + sql);
-        return (boolean)_run(sql, 0);
+        return _run(sql, Boolean.class);
     }
 
     public void run(String sql, Object... params) {
-        _run(sql, 0, params);
+        _run(sql, String.class, params);
     }
 
-    public Object _run(String sql, int type, Object... params) {
+    public <T> T _run(String sql, Class<T> type, Object... params) {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 
             if(sql.startsWith("SELECT")) {
                 ResultSet rs = stmt.executeQuery(); // 실제 반영된 로우 수. insert, update, delete
                 rs.next();
-                if (type == 0) return rs.getBoolean(1);
-                else if(type == 1) return rs.getString(1);
+                if (type == Boolean.class) return (T) (Boolean)rs.getBoolean(1);
+                else if(type == String.class) return (T) rs.getString(1);
             }
 
             setParams(stmt, params);
-            return stmt.executeUpdate();
+            return (T) (Integer)stmt.executeUpdate();
 
         } catch (SQLException e) {
             throw new RuntimeException("SQL 실행 실패: " + e.getMessage());
@@ -64,6 +64,6 @@ public class SimpleDb {
     }
 
     public String selectString(String sql) {
-        return (String)_run(sql, 1);
+        return _run(sql, String.class);
     }
 }
