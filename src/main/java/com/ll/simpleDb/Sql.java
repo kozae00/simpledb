@@ -29,11 +29,11 @@ public class Sql {
     }
 
     public long insert() {
-        return 1;
+        return simpleDb.insert(sqlBuilder.toString(), params);
     }
 
     public int update() {
-        return 3;
+        return simpleDb.update(sqlBuilder.toString(), params);
     }
 
     public int delete() {
