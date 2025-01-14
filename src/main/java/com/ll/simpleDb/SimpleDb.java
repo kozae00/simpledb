@@ -62,63 +62,64 @@ public class SimpleDb {
 
             if(sql.startsWith("SELECT")) {
                 ResultSet rs = stmt.executeQuery(); // 실제 반영된 로우 수. insert, update, delete
-
-                if(cls == Boolean.class) {
-                    rs.next();
-                    return cls.cast((rs.getBoolean(1)));
-                }
-                else if(cls == String.class) {
-                    rs.next();
-                    return cls.cast(rs.getString(1));
-                }
-                else if(cls == Long.class) {
-                    rs.next();
-                    return cls.cast(rs.getLong(1));
-                }
-                else if(cls == LocalDateTime.class) {
-                    rs.next();
-                    return cls.cast(rs.getTimestamp(1).toLocalDateTime());
-                }
-                else if(cls == Map.class) {
-                    rs.next();
-                    Map<String, Object> row = new HashMap<>();
-
-                    ResultSetMetaData metaData = rs.getMetaData();
-                    int columnCount = metaData.getColumnCount();
-
-                    for (int i = 1; i <= columnCount; i++) {
-                        String cname = metaData.getColumnName(i);
-                        row.put(cname, rs.getObject(i));
-                    }
-
-                    return cls.cast(row);
-                }
-                else if(cls == List.class) {
-                    List<Map<String, Object>> rows = new ArrayList<>();
-                    while (rs.next()) {
-                        Map<String, Object> row = new HashMap<>();
-
-                        ResultSetMetaData metaData = rs.getMetaData();
-                        int columnCount = metaData.getColumnCount();
-
-                        for (int i = 1; i <= columnCount; i++) {
-                            String cname = metaData.getColumnName(i);
-                            row.put(cname, rs.getObject(i));
-                        }
-
-                        rows.add(row);
-                    }
-                    return cls.cast(rows);
-                }
+                return parseResultSet(rs, cls);
             }
 
             setParams(stmt, params);
-
             return cls.cast(stmt.executeUpdate());
 
         } catch (SQLException e) {
             throw new RuntimeException("SQL 실행 실패: " + e.getMessage());
         }
+    }
+
+    private <T> T parseResultSet(ResultSet rs, Class<T> cls) throws SQLException {
+        if(cls == Boolean.class) {
+            rs.next();
+            return cls.cast((rs.getBoolean(1)));
+        }
+        else if(cls == String.class){
+            rs.next();
+            return cls.cast(rs.getString(1));
+        }
+        else if(cls == Long.class){
+            rs.next();
+            return cls.cast(rs.getLong(1));
+        }
+        else if(cls == LocalDateTime.class){
+            rs.next();
+            return cls.cast(rs.getTimestamp(1).toLocalDateTime());
+        }
+        else if(cls == Map.class) {
+            rs.next();
+            return cls.cast(rsRowToMap(rs));
+
+        } else if(cls == List.class) {
+            List<Map<String, Object>> rows = new ArrayList<>();
+
+            while(rs.next()) {
+                rows.add(rsRowToMap(rs));
+            }
+
+            return cls.cast(rows);
+        }
+
+        throw new RuntimeException();
+    }
+
+    private Map<String, Object> rsRowToMap(ResultSet rs) throws SQLException {
+
+        Map<String, Object> row = new HashMap<>();
+
+        ResultSetMetaData metaData = rs.getMetaData();
+        int columnCount = metaData.getColumnCount();
+
+        for (int i = 1; i <= columnCount; i++) {
+            String cname = metaData.getColumnName(i);
+            row.put(cname, rs.getObject(i));
+        }
+
+        return row;
     }
 
     private void setParams(PreparedStatement stmt, Object... params) throws SQLException {
