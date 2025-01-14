@@ -32,12 +32,25 @@ public class SimpleDb {
     }
 
     // SQL 실행 (DDL, DML 등 반환값이 없는 쿼리)
-    public void run(String sql) {
+    public int run(String sql) {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.executeUpdate();
-            if (devMode) {
-                System.out.println("SQL 실행 완료: " + sql);
-            }
+            int rst = stmt.executeUpdate(); // 실제 반영된 로우 수. insert, update, delete
+            return rst;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("SQL 실행 실패: " + e.getMessage());
+        }
+    }
+
+    public boolean selectBoolean(String sql) {
+
+        System.out.println("sql : " + sql);
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery(); // 실제 반영된 로우 수. insert, update, delete
+            rs.next();
+            return rs.getBoolean(1);
+
         } catch (SQLException e) {
             throw new RuntimeException("SQL 실행 실패: " + e.getMessage());
         }
@@ -89,6 +102,6 @@ public class SimpleDb {
     }
 
     public Sql genSql() {
-        return new Sql();
+        return new Sql(this);
     }
 }

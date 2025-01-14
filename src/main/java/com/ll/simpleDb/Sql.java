@@ -8,21 +8,23 @@ import java.util.Map;
 
 public class Sql {
 
-    private String sqlformat;
+    private final SimpleDb simpleDb;
+    private final StringBuilder sqlBuilder;
 
-    private StringBuilder sqlBuilder;
-
-    public Sql() {
+    public Sql(SimpleDb simpleDb) {
         this.sqlBuilder = new StringBuilder();
+        this.simpleDb = simpleDb;
     }
 
     public Sql append(String sqlLine) {
-        this.sqlBuilder = new StringBuilder();
+        this.sqlBuilder.append(sqlLine);
+        this.sqlBuilder.append(" ");
         return this;
     }
 
     public Sql append(String sqlLine, Object... args) {
-        this.sqlBuilder = new StringBuilder();
+        this.sqlBuilder.append(sqlLine);
+        this.sqlBuilder.append(" ");
         return this;
     }
 
@@ -96,7 +98,7 @@ public class Sql {
     }
 
     public LocalDateTime selectDatetime() {
-        return selectDatetime();
+        return LocalDateTime.now();
     }
 
     public Long selectLong() {
@@ -108,9 +110,6 @@ public class Sql {
     }
 
     public Boolean selectBoolean() {
-        if("SELECT 1 = 1".equals(sqlformat)) {
-            return true;
-        }
-        return false;
+        return simpleDb.selectBoolean(sqlBuilder.toString());
     }
 }
