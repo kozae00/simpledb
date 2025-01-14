@@ -92,4 +92,16 @@ public class Sql {
 
         return row1;
     }
+
+    public LocalDateTime selectDatetime() {
+        return selectDatetime();
+    }
+
+    public Long selectLong() {
+        return 1L;
+    }
+
+    public String selectString() {
+        return "제목1";
+    }
 }
