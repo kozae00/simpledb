@@ -31,7 +31,6 @@ public class SimpleDb {
         }
     }
 
-
     public long insert(String sql, List<Object> params) {
         return _run(sql, Long.class, params);
     }
@@ -80,6 +79,7 @@ public class SimpleDb {
         System.out.println("sql : " + sql);
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             setParams(stmt, params);
+
             if (sql.startsWith("SELECT")) {
                 ResultSet rs = stmt.executeQuery(); // 실제 반영된 로우 수. insert, update, delete
                 return parseResultSet(rs, cls);
@@ -87,6 +87,7 @@ public class SimpleDb {
 
             if(sql.startsWith("INSERT")) {
                 if(cls == Long.class) {
+
                     stmt.executeUpdate();
                     ResultSet rs = stmt.getGeneratedKeys();
                     if (rs.next()) {
@@ -95,7 +96,6 @@ public class SimpleDb {
                 }
             }
 
-            setParams(stmt, params);
             return cls.cast(stmt.executeUpdate());
 
         } catch (SQLException e) {
@@ -154,4 +154,11 @@ public class SimpleDb {
         }
     }
 
+    public List<Long> selectLongs(String sql, List<Object> params) {
+        List<Map<String, Object>> maps = selectRows(sql, params);
+
+        return maps.stream()
+                .map(map -> (Long)map.values().iterator().next())
+                .toList();
+    }
 }
