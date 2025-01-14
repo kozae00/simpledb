@@ -26,27 +26,41 @@ public class SimpleDb {
         }
     }
 
+    public String selectString(String sql) {
+        return _run(sql, String.class);
+    }
+
+    public Long selectLong(String sql) {
+        return _run(sql, Long.class);
+    }
+
     public boolean selectBoolean(String sql) {
         System.out.println("sql : " + sql);
         return _run(sql, Boolean.class);
     }
 
     public void run(String sql, Object... params) {
-        _run(sql, String.class, params);
+        _run(sql, Integer.class , params);
     }
 
-    public <T> T _run(String sql, Class<T> type, Object... params) {
+    public Sql genSql() {
+        return new Sql(this);
+    }
+
+    private <T> T _run(String sql, Class<T> cls, Object... params) {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 
             if(sql.startsWith("SELECT")) {
                 ResultSet rs = stmt.executeQuery(); // 실제 반영된 로우 수. insert, update, delete
                 rs.next();
-                if (type == Boolean.class) return (T) (Boolean)rs.getBoolean(1);
-                else if(type == String.class) return (T) rs.getString(1);
+                if(cls == Boolean.class) return cls.cast((rs.getBoolean(1)));
+                else if(cls == String.class) return cls.cast(rs.getString(1));
+                else if(cls == Long.class) return cls.cast(rs.getLong(1));
             }
 
             setParams(stmt, params);
-            return (T) (Integer)stmt.executeUpdate();
+
+            return cls.cast(stmt.executeUpdate());
 
         } catch (SQLException e) {
             throw new RuntimeException("SQL 실행 실패: " + e.getMessage());
@@ -59,11 +73,4 @@ public class SimpleDb {
         }
     }
 
-    public Sql genSql() {
-        return new Sql(this);
-    }
-
-    public String selectString(String sql) {
-        return _run(sql, String.class);
-    }
 }
