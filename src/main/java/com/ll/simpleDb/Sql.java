@@ -86,19 +86,11 @@ public class Sql {
 
     public Map<String, Object> selectRow() {
 
-        Map<String, Object> row1 = new HashMap<>();
-        row1.put("id", 1L);
-        row1.put("title", "제목1");
-        row1.put("body", "내용1");
-        row1.put("createdDate", LocalDateTime.now());
-        row1.put("modifiedDate", LocalDateTime.now());
-        row1.put("isBlind", false);
-
-        return row1;
+        return simpleDb.selectRow(sqlBuilder.toString());
     }
 
     public LocalDateTime selectDatetime() {
-        return LocalDateTime.now();
+        return simpleDb.selectDatetime(sqlBuilder.toString());
     }
 
     public Long selectLong() {

@@ -1,12 +1,18 @@
 package com.ll.simpleDb;
 
+import lombok.Setter;
+
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SimpleDb {
     private String dbUrl;
     private String dbUser;
     private String dbPassword;
     private Connection connection;
+    @Setter
     private boolean devMode = false;
 
     // 생성자: 데이터베이스 연결 정보 초기화
@@ -38,7 +44,9 @@ public class SimpleDb {
         System.out.println("sql : " + sql);
         return _run(sql, Boolean.class);
     }
-
+    public LocalDateTime selectDatetime(String sql) {
+        return _run(sql, LocalDateTime.class);
+    }
     public void run(String sql, Object... params) {
         _run(sql, Integer.class , params);
     }
@@ -56,6 +64,18 @@ public class SimpleDb {
                 if(cls == Boolean.class) return cls.cast((rs.getBoolean(1)));
                 else if(cls == String.class) return cls.cast(rs.getString(1));
                 else if(cls == Long.class) return cls.cast(rs.getLong(1));
+                else if(cls == LocalDateTime.class) return cls.cast(rs.getTimestamp(1).toLocalDateTime());
+                else if(cls == Map.class) {
+                    Map<String, Object> row = new HashMap<>();
+                    row.put("id", 1L);
+                    row.put("title", "제목1");
+                    row.put("body", "내용1");
+                    row.put("createdDate", LocalDateTime.now());
+                    row.put("modifiedDate", LocalDateTime.now());
+                    row.put("isBlind", false);
+
+                    return cls.cast(row);
+                }
             }
 
             setParams(stmt, params);
@@ -73,4 +93,7 @@ public class SimpleDb {
         }
     }
 
+    public Map<String, Object> selectRow(String sql) {
+        return _run(sql, Map.class);
+    }
 }
