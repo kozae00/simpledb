@@ -42,15 +42,6 @@ public class Sql {
 
     public List<Map<String, Object>> selectRows() {
 
-//        assertThat(articleRow.get("id")).isEqualTo(id);
-//        assertThat(articleRow.get("title")).isEqualTo("제목%d".formatted(id));
-//        assertThat(articleRow.get("body")).isEqualTo("내용%d".formatted(id));
-//        assertThat(articleRow.get("createdDate")).isInstanceOf(LocalDateTime.class);
-//        assertThat(articleRow.get("createdDate")).isNotNull();
-//        assertThat(articleRow.get("modifiedDate")).isInstanceOf(LocalDateTime.class);
-//        assertThat(articleRow.get("modifiedDate")).isNotNull();
-//        assertThat(articleRow.get("isBlind")).isEqualTo(false);
-
         List<Map<String, Object>> rows = new ArrayList<>();
 
         Map<String, Object> row1 = new HashMap<>();
@@ -81,7 +72,7 @@ public class Sql {
         rows.add(row2);
         rows.add(row3);
 
-        return rows;
+        return simpleDb.selectRows(sqlBuilder.toString());
     }
 
     public Map<String, Object> selectRow() {
