@@ -491,7 +491,7 @@ public class SimpleDbTest {
                 .selectLong();
 
         // 트랜잭션을 시작합니다.
-        simpleDb.startTransaction();
+        simpleDb.startTransaction(); // auto commit을 끄는 것.
 
         simpleDb.genSql()
                 .append("INSERT INTO article ")
@@ -499,7 +499,7 @@ public class SimpleDbTest {
                 .appendIn("VALUES (NOW(), NOW(), ?)", "새 제목", "새 내용")
                 .insert();
 
-        simpleDb.rollback();
+        simpleDb.rollback(); // rollback 명령 실행
 
         long newCount = simpleDb.genSql()
                 .append("SELECT COUNT(*)")
