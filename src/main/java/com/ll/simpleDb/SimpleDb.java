@@ -185,8 +185,7 @@ public class SimpleDb {
         // 커넥션은 리소스를 많이 사용하고, 자바가 안닫아줌.
         // 반드시 해제를 해야 함.
         try {
-            Connection conn = getCurrentThreadConnection();
-            conn.close();
+            getCurrentThreadConnection().close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -194,8 +193,7 @@ public class SimpleDb {
 
     public void startTransaction() {
         try {
-            Connection conn = getCurrentThreadConnection();
-            conn.setAutoCommit(false);
+            getCurrentThreadConnection().setAutoCommit(false);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -203,8 +201,17 @@ public class SimpleDb {
 
     public void rollback() {
         try {
-            Connection conn = getCurrentThreadConnection();
-            conn.rollback();
+            getCurrentThreadConnection().rollback();
+            getCurrentThreadConnection().setAutoCommit(true);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void commit() {
+        try {
+            getCurrentThreadConnection().commit();
+            getCurrentThreadConnection().setAutoCommit(true);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
