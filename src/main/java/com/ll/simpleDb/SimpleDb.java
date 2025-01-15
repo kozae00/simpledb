@@ -174,5 +174,13 @@ public class SimpleDb {
     }
 
     public void close() {
+
+        // 커넥션은 리소스를 많이 사용하고, 자바가 안닫아줌.
+        // 반드시 해제를 해야 함.
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
