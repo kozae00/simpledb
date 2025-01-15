@@ -47,6 +47,10 @@ public class SimpleDb {
         return _run(sql, Map.class, params);
     }
 
+    public <T> T selectRow(String sql, List<Object> params, Class<T> cls) {
+        return selectRows(sql, params, cls).getFirst();
+    }
+
     public List<Map<String, Object>> selectRows(String sql, List<Object> params) {
         return _run(sql, List.class, params);
     }
@@ -167,5 +171,8 @@ public class SimpleDb {
         return maps.stream()
                 .map(map -> (Long) map.values().iterator().next())
                 .toList();
+    }
+
+    public void close() {
     }
 }
